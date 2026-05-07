@@ -1,0 +1,441 @@
+<?php
+
+/* ============================= */
+/* CONEXIÓN A MYSQL */
+/* ============================= */
+
+$host = "localhost";
+$usuario = "root";
+$password = "";
+$base_datos = "videojuegos_db";
+
+$conn = new mysqli($host, $usuario, $password);
+
+if($conn->connect_error){
+    die("Error de conexión");
+}
+
+/* ============================= */
+/* CREAR BASE DE DATOS */
+/* ============================= */
+
+$conn->query("CREATE DATABASE IF NOT EXISTS videojuegos_db");
+
+$conn->select_db($base_datos);
+
+/* ============================= */
+/* CREAR TABLA */
+/* ============================= */
+
+$conn->query("CREATE TABLE IF NOT EXISTS historia(
+
+id INT AUTO_INCREMENT PRIMARY KEY,
+titulo VARCHAR(255),
+descripcion TEXT,
+anio VARCHAR(50),
+imagen VARCHAR(255)
+
+)");
+
+/* ============================= */
+/* INSERTAR DATOS */
+/* ============================= */
+
+$verificar = $conn->query("SELECT * FROM historia");
+
+if($verificar->num_rows == 0){
+
+$conn->query("INSERT INTO historia(titulo,descripcion,anio,imagen) VALUES
+
+('Inicio de los Videojuegos',
+'Los videojuegos comenzaron en los años 50 y 60 como experimentos electrónicos.',
+'1958',
+'https://images.unsplash.com/photo-1511512578047-dfb367046420'),
+
+('Era Arcade',
+'Las máquinas arcade dominaron el entretenimiento en los años 70 y 80.',
+'1980',
+'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8'),
+
+('Consolas Modernas',
+'PlayStation, Xbox y Nintendo revolucionaron el mundo gamer.',
+'2000',
+'https://images.unsplash.com/photo-1605901309584-818e25960a8f'),
+
+('Videojuegos Online',
+'Internet permitió experiencias multijugador masivas.',
+'2010',
+'https://images.unsplash.com/photo-1542751110-97427bbecf20')
+
+");
+
+}
+
+/* ============================= */
+/* CONSULTAR DATOS */
+/* ============================= */
+
+$sql = "SELECT * FROM historia";
+$resultado = $conn->query($sql);
+
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Historia de los Videojuegos</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:#0f172a;
+    color:white;
+    transition:0.5s;
+    overflow-x:hidden;
+}
+
+/* ============================= */
+/* HEADER */
+/* ============================= */
+
+header{
+    text-align:center;
+    padding:40px;
+    background:linear-gradient(90deg,#1e3a8a,#2563eb);
+    animation:entrada 2s;
+}
+
+header h1{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+header p{
+    font-size:22px;
+}
+
+@keyframes entrada{
+    from{
+        opacity:0;
+        transform:translateY(-50px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ============================= */
+/* BOTÓN CAMBIO COLOR */
+/* ============================= */
+
+.boton-tema{
+    margin-top:20px;
+    padding:15px 30px;
+    border:none;
+    border-radius:15px;
+    background:#f59e0b;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.5s;
+}
+
+.boton-tema:hover{
+    transform:scale(1.1);
+}
+
+/* ============================= */
+/* BANNER */
+/* ============================= */
+
+.banner{
+    height:400px;
+    background:url('https://images.unsplash.com/photo-1511512578047-dfb367046420');
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+}
+
+.banner h2{
+    font-size:60px;
+    text-shadow:2px 2px 10px black;
+}
+
+.banner p{
+    font-size:25px;
+    margin-top:15px;
+}
+
+/* ============================= */
+/* TARJETAS */
+/* ============================= */
+
+.contenedor{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+    padding:50px;
+}
+
+.card{
+    background:#1e293b;
+    border-radius:20px;
+    overflow:hidden;
+    transition:0.5s;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.02);
+}
+
+.card img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+}
+
+.contenido{
+    padding:20px;
+}
+
+.contenido h2{
+    margin-bottom:10px;
+}
+
+.contenido h3{
+    color:#38bdf8;
+    margin-bottom:15px;
+}
+
+.contenido p{
+    line-height:1.6;
+}
+
+.btn{
+    margin-top:20px;
+    padding:12px 20px;
+    background:#2563eb;
+    border:none;
+    border-radius:10px;
+    color:white;
+    cursor:pointer;
+    transition:0.4s;
+}
+
+.btn:hover{
+    background:#38bdf8;
+}
+
+/* ============================= */
+/* TIMELINE */
+/* ============================= */
+
+.timeline{
+    padding:60px;
+    text-align:center;
+}
+
+.timeline h2{
+    font-size:45px;
+    margin-bottom:40px;
+}
+
+.linea{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.evento{
+    background:#334155;
+    padding:30px;
+    border-radius:20px;
+    width:220px;
+    transition:0.5s;
+}
+
+.evento:hover{
+    background:#2563eb;
+    transform:scale(1.1);
+}
+
+/* ============================= */
+/* FOOTER */
+/* ============================= */
+
+footer{
+    background:#020617;
+    text-align:center;
+    padding:30px;
+    margin-top:40px;
+}
+
+/* ============================= */
+/* MODO CLARO */
+/* ============================= */
+
+.light-mode{
+    background:#f1f5f9;
+    color:black;
+}
+
+.light-mode .card{
+    background:white;
+    color:black;
+}
+
+.light-mode .evento{
+    background:#cbd5e1;
+    color:black;
+}
+
+.light-mode footer{
+    background:#94a3b8;
+}
+
+.light-mode header{
+    background:linear-gradient(90deg,#38bdf8,#0ea5e9);
+}
+
+</style>
+
+</head>
+
+<body id="body">
+
+<header>
+
+<h1>🎮 Historia de los Videojuegos</h1>
+
+<p>
+Explora la evolución gamer desde los inicios hasta la actualidad
+</p>
+
+<button class="boton-tema" onclick="cambiarTema()">
+
+Cambiar Color
+
+</button>
+
+</header>
+
+<section class="banner">
+
+<h2>Universo Gamer</h2>
+
+<p>
+Una experiencia interactiva y dinámica
+</p>
+
+</section>
+
+<section class="contenedor">
+
+<?php while($fila = $resultado->fetch_assoc()) { ?>
+
+<div class="card">
+
+<img src="<?php echo $fila['imagen']; ?>">
+
+<div class="contenido">
+
+<h2>
+<?php echo $fila['titulo']; ?>
+</h2>
+
+<h3>
+<?php echo $fila['anio']; ?>
+</h3>
+
+<p>
+<?php echo $fila['descripcion']; ?>
+</p>
+
+<button class="btn">
+
+Ver Más
+
+</button>
+
+</div>
+
+</div>
+
+<?php } ?>
+
+</section>
+
+<section class="timeline">
+
+<h2>📅 Línea del Tiempo</h2>
+
+<div class="linea">
+
+<div class="evento">
+<h3>1958</h3>
+<p>Primer videojuego creado</p>
+</div>
+
+<div class="evento">
+<h3>1980</h3>
+<p>Era Arcade</p>
+</div>
+
+<div class="evento">
+<h3>2000</h3>
+<p>Consolas HD</p>
+</div>
+
+<div class="evento">
+<h3>2026</h3>
+<p>IA y Realidad Virtual</p>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+<h2>
+🎮 Historia Gamer 2026
+</h2>
+
+<p>
+Proyecto Web PHP + MySQL
+</p>
+
+</footer>
+
+<script>
+
+function cambiarTema(){
+
+document.body.classList.toggle("light-mode");
+
+}
+
+</script>
+
+</body>
+</html>
